@@ -1,0 +1,12 @@
+@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@media print {
+  .no-print { display: none !important; }
+  header, footer { display: none !important; }
+  body { background: white !important; }
+  img { max-height: 250px; object-fit: cover; }
+  * { color: black !important; box-shadow: none !important; }
+}
