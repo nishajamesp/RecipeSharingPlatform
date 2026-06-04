@@ -1,4 +1,3 @@
-// dotenv MUST be first — before any other imports that read process.env
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -9,18 +8,31 @@ import authRoutes from "./routes/authRoutes.js";
 import recipeRoutes from "./routes/recipeRoutes.js";
 import favouriteRoutes from "./routes/favouriteRoutes.js";
 
-import dns from "node:dns/promises";
-dns.setServers(["1.1.1.1"]);
-
 connectDB();
 
 const app = express();
 
 app.use(express.json());
-app.use(cors({
-  origin: "http://localhost:5173",
-  credentials: true,
-}));
+
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://recipe-sharing-platform-sand-theta.vercel.app",
+];
+
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      // Allow requests with no origin (Postman, mobile apps, curl)
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error(`CORS blocked: ${origin}`));
+      }
+    },
+    credentials: true,
+  })
+);
 
 app.use("/api/auth", authRoutes);
 app.use("/api/recipes", recipeRoutes);
